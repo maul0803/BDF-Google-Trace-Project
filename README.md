@@ -73,7 +73,7 @@ L’analyse de la distribution des tâches en fonction de leur priorité révèl
 | 9        | 718              |
 | 10       | 134              |
 
-La majorité des tâches ont une **priorité élevée (9 et 10)**, ce qui suggère que **le cluster est principalement utilisé pour des jobs critiques nécessitant des ressources importantes**.
+La majorité des tâches et des jobs ont une **priorité élevée (9 et 10)**, ce qui suggère que **le cluster est principalement utilisé pour des jobs critiques nécessitant des ressources importantes**.
 
 ---
 
@@ -81,13 +81,15 @@ La majorité des tâches ont une **priorité élevée (9 et 10)**, ce qui suggè
 
 Pour mieux comprendre l’effet d’un seuil sur la consommation CPU, nous avons appliqué des filtres progressifs sur `combined_cpu_usage` et calculé la corrélation avec la mémoire.
 
-![Scatter Plot](Images/corr.png)
+![Scatter Plot](Images/tasks_corr.png)
+![Scatter Plot](Images/jobs_corr.png)
 
 #### Résultats :
 
 - La **corrélation entre CPU et mémoire augmente avec la consommation CPU**.
 - Pour les tâches les plus gourmandes en CPU (`combined_cpu_usage > 0.15`), la corrélation atteint **0.72**, ce qui signifie que ces tâches nécessitent aussi une mémoire importante.
-- La plupart des tâches ont une faible consommation CPU (< 0.05), mais celles avec une consommation élevée montrent une corrélation plus marquée.
+- Pour les jobs les plus gourmands en CPU(`combined_cpu_usage > 0.125`), la correlation atteint 0.675, ce qui signifie que les jobs nécessitent à l'instar des tâches un mémoire importante.
+- La plupart des tâches et des jobs ont une faible consommation CPU (< 0.05), mais celles avec une consommation élevée montrent une corrélation plus marquée.
 
 ---
 
@@ -95,56 +97,62 @@ Pour mieux comprendre l’effet d’un seuil sur la consommation CPU, nous avons
 
 #### **Scatter Plot : Relation CPU vs Mémoire**
 
-![Scatter Plot](Images/scatter.png)
+![Scatter Plot](Images/tasks_scatter.png)
+![Scatter Plot](Images/jobs_scatter.png)
 
-Le **scatter plot** montre une relation **croissante mais dispersée** entre `combined_memory_usage` et `combined_cpu_usage`. Cela indique que, bien que les tâches intensives en CPU tendent à consommer plus de mémoire, **la relation n’est pas strictement linéaire**.
+Le **scatter plot** des tasks et des jobs montre une relation **croissante mais dispersée** entre `combined_memory_usage` et `combined_cpu_usage`. Cela indique que, bien que les tâches intensives en CPU tendent à consommer plus de mémoire, **la relation n’est pas strictement linéaire**.
 
 ---
 
 #### **Distribution de la Consommation CPU et Mémoire**
 
-![Histogrammes](Images/hist.png)
+![Histogrammes](Images/tasks_hist.png)
+![Histogrammes](Images/jobs_hist.png)
 
 L’analyse des distributions met en évidence une **asymétrie forte** :
 
-- **La majorité des tâches consomment très peu** de mémoire et de CPU.
-- Une **minorité de tâches dominantes** impacte fortement la consommation globale.
+- **La majorité des tâches et des jobs consomment très peu** de mémoire et de CPU.
+- Une **minorité de tâches et de jobs dominantes** impacte fortement la consommation globale.
 
 ---
 
 #### **Impact de la Priorité sur la Consommation**
 
-![Boxplots](Images/boxplot.png)
+![Boxplots](Images/tasks_boxplot.png)
+![Boxplots](Images/jobs_boxplot.png)
 
-Les **tâches à haute priorité (9 et 10) consomment plus de ressources** en moyenne, mais elles présentent **une forte variabilité**, ce qui suggère qu’un petit nombre de tâches critiques monopolise les ressources.
-
+Les **tâches à haute priorité (9 et 10) consomment plus de ressources** en moyenne, mais elles présentent **une forte variabilité**, ce qui suggère qu’un petit nombre de tâches critiques monopolise les ressources.  
+Les **jobs à haute priorité (9 et 10) ainsi que les jobs de priorité 1 consomment plus de ressources** de même que pour les tasks, ils présentent **une forte variabilité**, ce qui suggère qu’un petit nombre de tâches critiques monopolise les ressources.  
+**70% des tasks de priorité 1 sont concentrés dans 3 jobs**.  
 ---
 
 #### **Matrice de Corrélation des Indicateurs**
 
-![Matrice de Corrélation](Images/heatmap.png)
+![Matrice de Corrélation](Images/tasks_heatmap.png)
+![Matrice de Corrélation](Images/jobs_heatmap.png)
 
 La **matrice de corrélation** met en évidence :
 
 - Une **corrélation très forte (> 0.95) entre les métriques de mémoire** (max, moyenne, combinée).
 - Une **corrélation élevée entre les indicateurs CPU**, notamment entre `max_cpu_usage` et `combined_cpu_usage` (0.99).
-- Une **corrélation modérée (0.45 - 0.52) entre mémoire et CPU**, ce qui signifie que certaines tâches peuvent être gourmandes en CPU sans consommer autant de mémoire.
-
+- Une **corrélation modérée (0.45 - 0.52) entre mémoire et CPU**, ce qui signifie que certaines tâches peuvent être gourmandes en CPU sans consommer autant de mémoire.  
+Des résultats similaires sont observés pour les jobs.  
 ---
 
 ## Conclusion
 
 L’analyse des traces Google Cluster nous a permis d’identifier plusieurs tendances clés :
 
-- **Les tâches les plus gourmandes** en CPU sont **également consommatrices de mémoire**, bien que la relation ne soit pas linéaire.
-- **Les tâches critiques (priorité 9 et 10)** présentent une **forte variabilité**, ce qui suggère que certaines consomment énormément de ressources tandis que d’autres sont plus légères.
-- **La distribution des ressources est inégale** : la majorité des tâches consomme peu, mais **quelques jobs dominants peuvent impacter les performances globales**.
+- **Les tâches et les jobs les plus gourmandes** en CPU sont **également consommateurs de mémoire**, bien que la relation ne soit pas linéaire.
+- **Les tâches et les jobs critiques (priorité 9 et 10)** présentent une **forte variabilité**, ce qui suggère que certaines consomment énormément de ressources tandis que d’autres sont plus légères.  
+- **Les tâches de priorité 1 sont concentrés dans un faible nombre de jobs**.  
+- **La distribution des ressources est inégale** : la majorité des tâches consomme peu, mais **quelques jobs dominants peuvent impacter les performances globales**.  
 
 ---
 
 ## Perspectives et Optimisations
 
-- **Optimisation de l’allocation des ressources** : Identifier les tâches les plus consommatrices et ajuster leur planification pour éviter les goulets d'étranglement.
+- **Optimisation de l’allocation des ressources** : Identifier les tâches et les jobs les plus consommateurs et ajuster leur planification pour éviter les goulets d'étranglement.
 - **Modélisation prédictive** : Utiliser l’apprentissage automatique pour anticiper la consommation des tâches et optimiser la répartition des ressources.
 - **Affinement de la gestion des priorités** : Étudier plus en détail **l’impact des tâches critiques** pour améliorer leur exécution sans déséquilibrer l’utilisation du cluster.
 
