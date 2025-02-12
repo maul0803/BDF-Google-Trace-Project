@@ -121,9 +121,11 @@ L’analyse des distributions met en évidence une **asymétrie forte** :
 ![Boxplots](Images/tasks_boxplot.png)
 ![Boxplots](Images/jobs_boxplot.png)
 
+
 Les **tâches à haute priorité (9 et 10) consomment plus de ressources** en moyenne, mais elles présentent **une forte variabilité**, ce qui suggère qu’un petit nombre de tâches critiques monopolise les ressources.  
-Les **jobs à haute priorité (9 et 10) ainsi que les jobs de priorité 1 consomment plus de ressources** de même que pour les tasks, ils présentent **une forte variabilité**, ce qui suggère qu’un petit nombre de tâches critiques monopolise les ressources.  
+Les **jobs à haute priorité (9 et 10) ainsi que les jobs de priorité 1 consomment plus de ressources**. De même que pour les tâches, ils présentent **une forte variabilité**, ce qui suggère qu’un petit nombre de tâches critiques monopolise les ressources.  
 **70% des tasks de priorité 1 sont concentrés dans 3 jobs**.  
+
 ---
 
 #### **Matrice de Corrélation des Indicateurs**
